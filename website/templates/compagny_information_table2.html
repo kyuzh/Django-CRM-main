@@ -9,6 +9,7 @@
       <th scope="col">Nb Effectif</th>
       <th scope="col">CA</th>
       <th scope="col">Grossiste</th>
+      <th scope="col">ID</th>
     </tr>
   </thead>
   <tbody>
@@ -22,7 +23,7 @@
 			<td>{{ company_information.nb_Effectif }}</td>
 			<td>{{ company_information.Chiffre_Affaire }}</td>
 			<td>{{ company_information.Grossiste }}</td>
-
+            <td>{{ company_information.id }}</td>
 		</tr>
 	{% endfor %}
 {% endif %}
