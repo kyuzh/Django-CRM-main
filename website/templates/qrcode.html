@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code</title>
+</head>
+<body>
+    <h1>QR Code for CDX CRM</h1>
+    <img src="{% static 'qrcode.png' %}" alt="QR Code">
+
+    <form method="post" action="{% url 'verify_code' %}">
+        {% csrf_token %}
+        <label for="code">Enter the code:</label>
+        <input type="text" id="code" name="code" required>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

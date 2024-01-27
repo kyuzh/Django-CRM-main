@@ -1,0 +1,312 @@
+/* Styles généraux */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Styles de la barre de navigation */
+.navbar {
+  background-color: #333;
+  padding: 10px 0;
+  border-bottom: 2px solid #007bff;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Styles de la liste du menu */
+.navbar-nav {
+  display: flex; /* Affichez les éléments de la liste horizontalement */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin-right: 20px; /* Espace entre les éléments du menu */
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #fff;
+  transition: color 0.3s; /* Transition de couleur au survol des liens */
+}
+
+.nav-link:hover {
+  color: #007bff; /* Couleur au survol des liens */
+}
+
+/* Styles du bouton principal */
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Transition de couleur au survol du bouton */
+}
+
+.btn-primary:hover {
+  background-color: #0056b3; /* Couleur au survol du bouton */
+}
+
+/* Styles du pied de page */
+.footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Ajoutez vos styles personnalisés ci-dessous */
+
+/* Styles pour personnaliser la grille du tableau */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    color: #333;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+    border-top: 2px solid #dee2e6;
+}
+
+.table-sm th,
+.table-sm td {
+    padding: 0.3rem;
+}
+
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered thead th,
+.table-bordered thead td {
+    border-bottom-width: 2px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Styles pour personnaliser les classes de couleur des cellules */
+.bg-primary {
+    background-color: #007bff !important;
+    color: #fff;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+    color: #fff;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+    color: #fff;
+}
+
+
+/* Styles du menu déroulant */
+.navbar-nav .dropdown:hover .dropdown-menu {
+  display: block;
+  animation: fadeInUp 0.3s ease-in-out; /* Animation d'apparition en fondu vers le haut */
+}
+
+
+.nav-item.dropdown {
+    position: relative; /* Position relative pour que le menu déroulant fonctionne */
+
+}
+
+.nav-link.dropdown-toggle::after {
+    content: "\f077"; /* Ajoute une flèche vers le bas à la fin du texte "Options" */
+    font-family: "Font Awesome 5 Free"; /* Utilisez une police d'icônes comme Font Awesome pour la flèche */
+    font-weight: 900;
+    margin-left: 5px; /* Espacement entre le texte et la flèche */
+    display: inline-block; /* Affiche la flèche à côté du texte */
+    transition: transform 0.2s; /* Animation de la rotation de la flèche */
+}
+
+.dropdown-menu {
+    display: none; /* Masque initialement les options du menu */
+    position: absolute;
+    top: 100%; /* Place le menu en dessous du lien "Options" */
+    left: 0;
+    background-color: #333;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    min-width: 200px; /* Largeur minimale du menu déroulant */
+}
+
+
+/* Style for the pagination buttons */
+.pagination {
+    display: inline-block;
+    margin: 0;
+    padding-left: 0;
+}
+
+.pagination li {
+    display: inline;
+    margin-right: 5px;
+}
+
+.pagination li a {
+    text-decoration: none;
+    background-color: #007bff;
+    color: #fff;
+    border: 1px solid #007bff;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+.pagination li.active a {
+    background-color: #0056b3;
+    border: 1px solid #0056b3;
+}
+
+.pagination li.disabled a {
+    pointer-events: none;
+    background-color: #ccc;
+    color: #666;
+    border: 1px solid #ccc;
+}
+
+/* Add hover effect for all buttons */
+.pagination li a:hover {
+    background-color: #0056b3;
+    border: 1px solid #0056b3;
+}
+
+/* Style for the "Précédent" and "Suivant" buttons */
+.pagination .page-item:first-child a,
+.pagination .page-item:last-child a {
+    border-radius: 4px;
+}
+
+/* Center-align the pagination container */
+.pagination-center {
+    display: flex;
+    justify-content: center;
+}
+
+/* Style du side menu */
+.side-menu {
+    width: 250px; /* Largeur du menu, ajustez selon vos besoins */
+    background-color: #333; /* Couleur de fond du menu */
+    color: #fff; /* Couleur du texte du menu */
+    position: fixed; /* Pour que le menu reste fixe */
+    top: 0;
+    left: -250px; /* Masquer le menu initialement */
+    height: 100%; /* Hauteur du menu pour occuper toute la hauteur de la page */
+    overflow-x: hidden; /* Masquer les débordements horizontaux */
+    transition: 0.3s; /* Effet de transition pour l'ouverture/fermeture du menu */
+}
+
+/* Style des liens du menu */
+.side-menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.side-menu ul li {
+    padding: 10px;
+}
+
+.side-menu ul li a {
+    text-decoration: none;
+    color: #fff;
+    display: block;
+}
+
+.side-menu ul li a:hover {
+    background-color: #555; /* Couleur de fond au survol */
+}
+
+/* Style du bouton pour ouvrir/fermer le menu */
+.menu-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #fff;
+}
+
+/* Style pour afficher le menu lorsqu'il est ouvert */
+.side-menu.open {
+    left: 0;
+}
+
+/* Ajoutez une transition fluide lors de l'ouverture/fermeture du menu */
+.side-menu.transition {
+    transition: 0.3s;
+}
+
+.filtre_card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.fnavbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 25%;
+    background-color: #f1f1f1;
+    height: 100%; /* Full height */
+    position: fixed; /* Make it stick, even on scroll */
+    overflow: auto; /* Enable scrolling if the sidenav has too much content */
+}
+
+.fnavbar li a {
+    display: block;
+    color: #000;
+    padding: 8px 0 8px 16px;
+    text-decoration: none;
+}
+
+.fnavbar li a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.fnavbar li a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+}

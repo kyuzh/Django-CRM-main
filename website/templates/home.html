@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block filtre %}
+
+{% if user.is_authenticated %}
+
+<div class="d-flex justify-content-center align-items-center" style="margin-top: 20px;">
+    <form class="filtre_card" method="get" action="">
+        <div class="form-group">
+            <select name="table" class="form-control" disabled>
+                <option value="table1" selected>Table 1</option>
+                <option value="table2" {% if table == 'table2' %}selected{% endif %}>Table 2</option>
+                <!-- Ajoutez d'autres options en fonction de vos besoins -->
+            </select>
+        </div>
+        <div class="form-group">
+            <input name="searchValue" class="form-control" style="width: 250px;" value="{% if search_value %}{{ search_value }}{% endif %}">
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+</div>
+
+<div class="hstack gap-3 hstack-with-margin">
+    <p class="lead ms-auto" id="recordCount">Total:{{record_count}}</p>
+    <p class="elementsPerPage " for="elementsPerPage">Éléments par page:</p>
+    <select id="elementsPerPage">
+        <option value="1">1</option>
+        <option value="3">3</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      <!-- Ajoutez d'autres options selon vos besoins -->
+    </select>
+
+    <!-- Ajoutez un menu déroulant pour l'option "Import" -->
+    <div class="dropdown export-dropdown">
+        <a class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Export
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+            <li class="export-item">
+            <a class="dropdown-item" href="{% url 'export_csv' %}">Export CSV</a>
+            </li>
+            <li class="export-item">
+            <a class="dropdown-item" href="{% url 'export_excel' %}">Export Excel</a>
+            </li>
+            <!-- Ajoutez d'autres options d'import si nécessaire -->
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% endblock%}
+
+{% block content %}
+{% if user.is_authenticated %}
+<!-- Table information -->
+{% if table == 'table1' %}
+    {% include 'compagny_information_table2.html' %}
+{% else %}
+    {% include 'compagny_information_table.html' %}
+{% endif %}
+
+<!-- Ajoutez ces classes Bootstrap à vos éléments de pagination -->
+<div style="text-align: center;">
+    <div class="dt-footer">
+        <div class="dataTables_paginate" id="DataTables_Table_10_paginate">
+            <div class="input-group justify-content-center">
+                <button class="btn btn-primary" id="previousLink" onclick="updateParams(-1)">Précédent</button>
+
+                <!-- Affichage des numéros de page -->
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Pages</span>
+                </div>
+                <input type="text" id="pageNumberInput" class="form-control" placeholder="Numéro de page" style="max-width: 150px;">
+                <button id="goToPageButton" class="btn btn-primary" type="button" onclick="goToPage()">Aller</button>
+                <button class="btn btn-primary" id="nextLink" onclick="updateParams(1)">Suivant</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% else %}
+
+<div class="col-md-6 offset-md-3">
+<h1>Login</h1>
+<br/>
+
+<form method="POST" action="{% url 'home' %}">
+	{% csrf_token %}
+
+  <div class="mb-3">
+    <input type="text" class="form-control" name="username", placeholder="Username" required>
+    
+  </div><br/>
+  <div class="mb-3">
+    <input type="password" class="form-control" name="password", placeholder="Password" required>
+  </div>
+  <br/>
+  <button type="submit" class="btn btn-secondary">Login</button>
+
+</form>
+</div>
+
+{% endif %}
+{% endblock %}
