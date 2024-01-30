@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Record
+from .models import Record, company_information
 
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
@@ -45,4 +45,16 @@ class AddRecordForm(forms.ModelForm):
 
 	class Meta:
 		model = Record
+		exclude = ("user",)
+
+class AddRecordForm_compagny_information(forms.ModelForm):
+	nom_entreprise = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"nom d'entreprise", "class":"form-control"}), label="")
+	siren = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Siren", "class":"form-control"}), label="")
+	type_entreprise = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"type d'entreprise", "class":"form-control"}), label="")
+	nb_Effectif = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Nb Effectif", "class":"form-control"}), label="")
+	Chiffre_Affaire = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Chiffre d'Affaire", "class":"form-control"}), label="")
+	Grossiste = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Grossiste", "class":"form-control"}), label="")
+
+	class Meta:
+		model = company_information
 		exclude = ("user",)

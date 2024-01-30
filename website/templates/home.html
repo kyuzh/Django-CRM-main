@@ -40,10 +40,10 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="exportDropdown">
             <li class="export-item">
-            <a class="dropdown-item" href="{% url 'export_csv' %}">Export CSV</a>
+            <a class="dropdown-item" href="{% url 'export_csv' %}?table={{ request.GET.table|default:'table1' }}&searchValue={{ request.GET.searchValue|default:'' }}&page={{ request.GET.page|default:1 }}&elementsPerPage={{ request.GET.elementsPerPage|default:10 }}">Export CSV</a>
             </li>
             <li class="export-item">
-            <a class="dropdown-item" href="{% url 'export_excel' %}">Export Excel</a>
+            <a class="dropdown-item" href="{% url 'export_excel' %}?table={{ request.GET.table|default:'table1' }}&searchValue={{ request.GET.searchValue|default:'' }}&page={{ request.GET.page|default:1 }}&elementsPerPage={{ request.GET.elementsPerPage|default:10 }}">Export Excel</a>
             </li>
             <!-- Ajoutez d'autres options d'import si nécessaire -->
         </ul>
@@ -56,11 +56,8 @@
 {% block content %}
 {% if user.is_authenticated %}
 <!-- Table information -->
-{% if table == 'table1' %}
-    {% include 'compagny_information_table2.html' %}
-{% else %}
-    {% include 'compagny_information_table.html' %}
-{% endif %}
+{% include 'compagny_information_table.html' %}
+
 
 <!-- Ajoutez ces classes Bootstrap à vos éléments de pagination -->
 <div style="text-align: center;">

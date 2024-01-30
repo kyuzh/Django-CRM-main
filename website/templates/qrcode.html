@@ -6,9 +6,11 @@
 </head>
 <body>
     <h1>QR Code for CDX CRM</h1>
-    <img src="{% static 'qrcode.png' %}" alt="QR Code">
+    {% with qr_image_path="qrcode_"|add:username|add:".png" %}
+        <img src="{% static qr_image_path %}" alt="QR Code">
+    {% endwith %}
 
-    <form method="post" action="{% url 'verify_code' %}">
+    <form method="post" action="{% url 'verify_code' username=username %}">
         {% csrf_token %}
         <label for="code">Enter the code:</label>
         <input type="text" id="code" name="code" required>

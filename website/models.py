@@ -19,11 +19,11 @@ class Record(models.Model):
 class company_information(models.Model):
 	# nom_entreprise, siren, type, nb_Effectif, Chiffre_d_Affaire,Grossiste
 	nom_entreprise = models.CharField(max_length=50)
-	siren =  models.CharField(max_length=10)
-	type_entreprise =  models.CharField(max_length=50)
+	siren = models.CharField(max_length=10)
+	type_entreprise = models.CharField(max_length=50)
 	nb_Effectif = models.CharField(max_length=20)
 	Chiffre_Affaire = models.CharField(max_length=50)
-	Grossiste =  models.CharField(max_length=500)
+	Grossiste = models.CharField(max_length=500)
 
 	def __str__(self):
 		return(f"{self.nom_entreprise}")
