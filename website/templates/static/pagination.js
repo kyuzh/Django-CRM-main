@@ -9,8 +9,8 @@ function refreshPage_elements() {
   var searchInput = document.querySelector('input[name="searchValue"]');
   var searchValue = searchInput.value.toUpperCase();
 
-  if (page < 0) {
-    page = 1
+  if (page <= 0) {
+    page = 1;
     start = 0;
     end = elementsPerPage - 1;
   }
@@ -18,11 +18,6 @@ function refreshPage_elements() {
   // Mettre à jour les valeurs des paramètres dans l'URL
   urlParams.set("page", page.toString());
   urlParams.set("elementsPerPage", elementsPerPage.toString());
-   // Check if the "table" parameter is present and add it to the URL
-  var tableParam = urlParams.get("table");
-  if (tableParam !== null) {
-    urlParams.set("table", tableParam);
-  }
   urlParams.set("searchValue", searchValue.toString());
 
   // Sauvegarder dans le stockage local
@@ -32,67 +27,140 @@ function refreshPage_elements() {
 
   // Rediriger vers la nouvelle URL avec les paramètres mis à jour
   window.location.href = "?" + urlParams.toString();
-
 }
-
-// Attachez la fonction refreshPage_elements à l'événement "change" de l'élément avec l'ID "elementsPerPage"
-document.getElementById("elementsPerPage").addEventListener("change", refreshPage_elements);
 
 // Lorsque la page est chargée, vérifiez s'il y a une valeur dans le stockage local pour "elementsPerPage"
 // Si c'est le cas, configurez l'élément de sélection avec cette valeur
-
 document.addEventListener("DOMContentLoaded", function () {
-  var elementsPerPage = localStorage.getItem("elementsPerPage");
-  if (elementsPerPage !== null) {
-    document.getElementById("elementsPerPage").value = elementsPerPage;
-    console.log("Valeur de elementsPerPage mise à jour dans l'élément de sélection : " + elementsPerPage);
+  var elementsPerPage_input = document.getElementById('elementsPerPage');
+  if (elementsPerPage_input) {
+      var elementsPerPage = localStorage.getItem("elementsPerPage");
+      if (elementsPerPage !== null) {
+        document.getElementById("elementsPerPage").value = elementsPerPage;
+        console.log("Valeur de elementsPerPage mise à jour dans l'élément de sélection : " + elementsPerPage);
+      }
 
-  var searchInput = document.querySelector('input[name="searchValue"]');
-  var searchValue = searchInput.value.toUpperCase();
+      var searchInput = document.querySelector('input[name="searchValue"]');
+      var searchValue = searchInput.value.toUpperCase();
 
-  if (searchValue !== null) {
-    document.querySelector('input[name="searchValue"]').value = searchValue;
-    console.log("Valeur de searchValue mise à jour : " + searchValue);
-  }
+      if (searchValue !== null) {
+        document.querySelector('input[name="searchValue"]').value = searchValue;
+        console.log("Valeur de searchValue mise à jour : " + searchValue);
+      }
 
-  // Récupérez la valeur actuelle de "start" depuis l'URL
-  var urlParams = new URLSearchParams(window.location.search);
-  var page = parseInt(urlParams.get("page")) || 1;
-  var elementsPerPage = parseInt(document.getElementById("elementsPerPage").value) || 10;
-  var start = (page - 1) * elementsPerPage || 0;
-  var end = page * elementsPerPage - 1; // Calcul de la valeur de "end"
+      // Récupérez la valeur actuelle de "start" depuis l'URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var page = parseInt(urlParams.get("page")) || 1;
+        var elementsPerPage = parseInt(document.getElementById("elementsPerPage").value) || 10;
+        var start = (page - 1) * elementsPerPage || 0;
+        var end = page * elementsPerPage - 1; // Calcul de la valeur de "end"
 
-  var leadElement = document.querySelector('.lead');
-  var leadText = leadElement.textContent;
-  var totalItems = parseInt(leadText.match(/\d+/)[0]) - 1;
+        var leadElement = document.querySelector('.lead');
+        var leadText = leadElement.textContent;
+        var totalItems = parseInt(leadText.match(/\d+/)[0]) - 1;
 
-  if ((page-1) * elementsPerPage > totalItems) {
-    page = page - 1
-    end = totalItems;
-    start = Math.max(0,end - end % elementsPerPage);
-  }
+        if ((page - 1) * elementsPerPage > totalItems) {
+          page = page - 1;
+          end = totalItems;
+          start = Math.max(0, end - end % elementsPerPage);
+        }
 
-  var tableRows = document.querySelectorAll('.table tbody tr');
-    console.log(tableRows);
-    for (var i = 0 ; i < tableRows.length + 1; i++) {
-        if (i >= start && i < end + 1) {
+        var tableRows = document.querySelectorAll('.table tbody tr');
+        for (var i = 0; i < tableRows.length; i++) {
+          if (i >= start && i < end + 1) {
             console.log(tableRows[i]);
             tableRows[i].style.display = 'table-row';
-        } else {
+          } else {
             tableRows[i].style.display = 'none';
+          }
         }
-    }
-  }
-  // Mettre à jour les valeurs des paramètres dans l'URL
-  urlParams.set("page", page.toString());
-  urlParams.set("elementsPerPage", elementsPerPage.toString());
 
-  // Check if the "table" parameter is present and add it to the URL
-  var tableParam = urlParams.get("table");
-  if (tableParam !== null) {
-    urlParams.set("table", tableParam);
+        // Mettre à jour les valeurs des paramètres dans l'URL
+        urlParams.set("page", page.toString());
+        urlParams.set("elementsPerPage", elementsPerPage.toString());
+
+        // Check if the "table" parameter is present and add it to the URL
+        var tableParam = urlParams.get("table");
+        if (tableParam !== null) {
+          urlParams.set("table", tableParam);
+        }
+
+        // Attachez la fonction refreshPage_elements à l'événement "change" de l'élément avec l'ID "elementsPerPage"
+        document.getElementById("elementsPerPage").addEventListener("change", refreshPage_elements);
+
+}
+});
+
+
+// cliquer sur le bouton "recherche"
+document.addEventListener("DOMContentLoaded", function () {
+  var searchButton = document.getElementById('searchButton');
+  if (searchButton) {
+    searchButton.addEventListener('click', function (event) {
+
+      // Récupérez l'élément <p> avec l'ID "recordCount"
+      var nouveauRecordCount = 0;
+
+      var urlParams = new URLSearchParams(window.location.search);
+      var page = parseInt(urlParams.get("page")) || 1;
+      var elementsPerPage = parseInt(document.getElementById("elementsPerPage").value) || 10;
+      var start = (page - 1) * elementsPerPage || 0;
+      var end = page * elementsPerPage - 1; // Calcul de la valeur de "end"
+      var searchInput = document.querySelector('input[name="searchValue"]');
+      var searchValue = searchInput.value.toUpperCase();
+
+      start = 0;
+      end = elementsPerPage - 1;
+      var tableName = urlParams.get('table');
+
+      // Parcourez les éléments du tableau correspondant à la table spécifiée dans l'URL
+      var tableRows = document.querySelectorAll('.' + tableName + ' tbody tr');
+
+      console.log(tableRows);
+      for (var i = 0; i < tableRows.length; i++) {
+        var row = tableRows[i];
+        console.log(row);
+        var phoneValue = row.querySelector('td:nth-child(3)').textContent.toUpperCase(); // Utilisez le numéro de colonne correspondant à "Phone" (dans cet exemple, c'est la 3e colonne)
+        var addressValue = row.querySelector('td:nth-child(4)').textContent.toUpperCase(); // Utilisez le numéro de colonne correspondant à "Phone" (dans cet exemple, c'est la 3e colonne)
+
+        // Comparez la valeur de recherche avec les valeurs des colonnes "Phone" et "Address"
+        if (phoneValue.includes(searchValue) || addressValue.includes(searchValue)) {
+          // Affichez la ligne si elle correspond au filtre
+          row.style.display = 'table-row';
+          nouveauRecordCount = nouveauRecordCount + 1;
+        } else {
+          // Masquez la ligne si elle ne correspond pas au filtre
+          row.style.display = 'none';
+        }
+        // Récupérez l'élément <p> avec l'ID "recordCount"
+        var recordCountElement = document.getElementById('recordCount');
+
+        // Mettez à jour le contenu de l'élément <p> avec la nouvelle valeur
+        recordCountElement.textContent = 'Total: ' + nouveauRecordCount; // Remplacez 'nouveauRecordCount' par la nouvelle valeur souhaitée
+
+
+        // Mettre à jour les valeurs des paramètres dans l'URL
+        urlParams.set("page", page.toString());
+        urlParams.set("elementsPerPage", elementsPerPage.toString());
+
+        // Check if the "table" parameter is present and add it to the URL
+        var tableParam = urlParams.get("table");
+        if (tableParam !== null) {
+          urlParams.set("table", tableParam);
+        }
+
+        urlParams.set("searchValue", searchValue.toString());
+        // Rediriger vers la nouvelle URL avec les paramètres mis à jour
+        window.location.href = "?" + urlParams.toString();
+
+        // Sauvegarder dans le stockage local
+        localStorage.setItem("searchValue", searchValue);
+      }
+    });
   }
 });
+
+
 
 // Fonction pour changer de page
 function updateParams(change) {
@@ -158,73 +226,6 @@ function updateParams(change) {
 }
 
 
-// cliquer sur le bouton "recherche"
-document.addEventListener("DOMContentLoaded", function () {
-  var bouton = document.querySelector('.btn-primary'); // Sélectionnez le bouton par sa classe
-      bouton.addEventListener('click', function (event) {
-
-    event.preventDefault(); // Empêche le formulaire de se soumettre normalement et de rafraîchir la page
-
-    // Récupérez l'élément <p> avec l'ID "recordCount"
-    var nouveauRecordCount = 0
-
-    var urlParams = new URLSearchParams(window.location.search);
-    var page = parseInt(urlParams.get("page")) || 1;
-    var elementsPerPage = parseInt(document.getElementById("elementsPerPage").value) || 10;
-    var start = (page - 1) * elementsPerPage || 0;
-    var end = page * elementsPerPage - 1; // Calcul de la valeur de "end"
-    var searchInput = document.querySelector('input[name="searchValue"]');
-    var searchValue = searchInput.value.toUpperCase();
-
-    start = 0;
-    end = elementsPerPage - 1;
-    var tableName = urlParams.get('table');
-
-    // Parcourez les éléments du tableau correspondant à la table spécifiée dans l'URL
-    var tableRows = document.querySelectorAll('.' + tableName + ' tbody tr');
-
-    console.log(tableRows);
-    for (var i = 0; i < tableRows.length; i++) {
-      var row = tableRows[i];
-      console.log(row);
-      var phoneValue = row.querySelector('td:nth-child(3)').textContent.toUpperCase(); // Utilisez le numéro de colonne correspondant à "Phone" (dans cet exemple, c'est la 3e colonne)
-      var addressValue = row.querySelector('td:nth-child(4)').textContent.toUpperCase(); // Utilisez le numéro de colonne correspondant à "Phone" (dans cet exemple, c'est la 3e colonne)
-
-      // Comparez la valeur de recherche avec les valeurs des colonnes "Phone" et "Address"
-      if (phoneValue.includes(searchValue) || addressValue.includes(searchValue)) {
-        // Affichez la ligne si elle correspond au filtre
-        row.style.display = 'table-row';
-        nouveauRecordCount = nouveauRecordCount + 1
-      } else {
-        // Masquez la ligne si elle ne correspond pas au filtre
-        row.style.display = 'none';
-      }
-      // Récupérez l'élément <p> avec l'ID "recordCount"
-        var recordCountElement = document.getElementById('recordCount');
-
-        // Mettez à jour le contenu de l'élément <p> avec la nouvelle valeur
-        recordCountElement.textContent = 'Total: ' + nouveauRecordCount; // Remplacez 'nouveauRecordCount' par la nouvelle valeur souhaitée
-
-
-    // Mettre à jour les valeurs des paramètres dans l'URL
-    urlParams.set("page", page.toString());
-    urlParams.set("elementsPerPage", elementsPerPage.toString());
-
-    // Check if the "table" parameter is present and add it to the URL
-    var tableParam = urlParams.get("table");
-    if (tableParam !== null) {
-      urlParams.set("table", tableParam);
-    }
-
-    urlParams.set("searchValue", searchValue.toString());
-    // Rediriger vers la nouvelle URL avec les paramètres mis à jour
-    window.location.href = "?" + urlParams.toString();
-
-    // Sauvegarder dans le stockage local
-    localStorage.setItem("searchValue", searchValue);
-    }
-  });
-});
 
 function goToPage() {
     var pageNumberInput = document.getElementById("pageNumberInput").value;
@@ -296,10 +297,4 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener('DOMContentLoaded', function () {
     // Enable the select element
     document.querySelector('select[name="table"]').removeAttribute('disabled');
-});
-
-$(document).ready(function () {
-    $('#sidebarCollapse').on('click', function () {
-        $('#sidebar').toggleClass('active');
-    });
 });

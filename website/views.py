@@ -10,6 +10,7 @@ from django.conf import settings  # Importez les paramètres Django
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 
+import json
 import time
 import os
 import csv
@@ -65,7 +66,6 @@ def record_filtre(request, model, records_query,search_value):
     except EmptyPage:
         records = paginator.page(paginator.num_pages)
 
-
     return records, records_query
 
 def home(request):
@@ -99,8 +99,8 @@ def TOW_FA(request, username):
     # Obtenez le chemin complet du répertoire `static` de votre application Django
     static_root = os.path.join(settings.BASE_DIR, 'website', 'templates', 'static')
 
-    # Définissez le chemin complet du fichier `code_{username}.txt`
-    file_path = os.path.join(static_root, f'code_{username}.txt')
+    # Définissez le chemin complet du fichier `code_{username}.json`
+    file_path = os.path.join(static_root, f'code_{username}.json')
 
     # Définissez le chemin complet du fichier d'image (par exemple, static/qrcode.png)
     image_path = os.path.join(static_root, f'qrcode_{username}.png')
@@ -112,9 +112,17 @@ def TOW_FA(request, username):
         # Générez le QR code et enregistrez-le avec le chemin d'accès complet
         qrcode.make(uri).save(image_path)
 
-        # Écrivez la clé dans le fichier
-        with open(file_path, 'w') as file:
-            file.write(key)
+        # Écrivez la clé dans le fichier JSON
+        with open(file_path, 'w') as json_file:
+            json.dump({'key': key, 'first connexion': True, 'code verified': False}, json_file)
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as json_file:
+            json_data = json.load(json_file)
+        # Mettez à jour la valeur de la clé 'first connexion'
+        json_data['code verified'] = False
+        # Écrivez le contenu mis à jour dans le fichier JSON
+        with open(file_path, 'w') as json_file:
+            json.dump(json_data, json_file)
 
     # Renvoyer le modèle HTML avec le chemin d'accès au QR code
     return render(request, 'qrcode.html', {'image_path': image_path, 'username': username})
@@ -130,12 +138,15 @@ def verify_code(request, username):
         # Obtenez le chemin complet du répertoire `static` de votre application Django
         static_root = os.path.join(settings.BASE_DIR, 'website', 'templates', 'static')
 
-        # Définissez le chemin complet du fichier `code_username.txt`
-        file_path = os.path.join(static_root, f'code_{username}.txt')
+        # Définissez le chemin complet du fichier `code_username.json`
+        file_path = os.path.join(static_root, f'code_{username}.json')
 
-        # Lisez le contenu du fichier
-        with open(file_path, 'r') as file:
-            expected_code = file.read()
+        # Lisez le contenu du fichier JSON
+        with open(file_path, 'r') as json_file:
+            json_data = json.load(json_file)
+
+        # Récupérez la clé à partir du contenu JSON
+        expected_code = json_data.get('key', '')
 
 
         # Générer le TOTP avec un décalage de 160 secondes
@@ -144,6 +155,16 @@ def verify_code(request, username):
         expected_code = expected_code.at(current_time + 215)
         # Vérifiez si le code entré correspond au code attendu
         if expected_code == entered_code:
+            # Écrivez la clé dans le fichier JSON
+            with open(file_path, 'r') as json_file:
+                json_data = json.load(json_file)
+            # Mettez à jour la valeur de la clé 'first connexion'
+            json_data['first connexion'] = False
+            json_data['code verified'] = True
+            # Écrivez le contenu mis à jour dans le fichier JSON
+            with open(file_path, 'w') as json_file:
+                json.dump(json_data, json_file)
+
             # Le code est correct
             return redirect('home')
         else:

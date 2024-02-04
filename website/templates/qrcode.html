@@ -5,9 +5,13 @@
     <title>QR Code</title>
 </head>
 <body>
-    <h1>QR Code for CDX CRM</h1>
-    {% with qr_image_path="qrcode_"|add:username|add:".png" %}
-        <img src="{% static qr_image_path %}" alt="QR Code">
+    {% with json_data="code_verified"|add:username|add:".json" %}
+        {% if json_data.first_connexion == True %}
+            <h1>QR Code for CDX CRM</h1>
+            {% with qr_image_path="qrcode_"|add:username|add:".png" %}
+                <img src="{% static qr_image_path %}" alt="QR Code">
+            {% endwith %}
+        {% endif %}
     {% endwith %}
 
     <form method="post" action="{% url 'verify_code' username=username %}">
