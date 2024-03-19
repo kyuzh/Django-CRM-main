@@ -2,26 +2,23 @@
 {% block content %}
 
 <div class="col-md-6 offset-md-3">
-<h1>Add Record</h1>
-<br/>
+    <h1>Ajouter un enregistrement</h1>
+    <br/>
 
-<form method="POST" action="{% url 'add_record' %}?table={{ table }}">
-	{% csrf_token %}
+    <form method="POST" action="{% url 'add_record' %}?table={{ table }}">
+        {% csrf_token %}
 
-	{{ form.as_p }}
+        {{ form.as_p }}
 
-<br/>
-  <button type="submit" class="btn btn-secondary">Add Record</button>
+        <br/>
+        <button type="submit" class="btn btn-secondary">Ajouter un enregistrement</button>
 
-    {% if table == 'table1' %}
-        <a href="{% url 'home'%}" class="btn btn-secondary">Back</a>
-
-    {% else %}
-        <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
-    {% endif %}
-
-
-</form>
+        {% if table == 'table1' %}
+            <a href="{% url 'home'%}" class="btn btn-secondary">Retour</a>
+        {% else %}
+            <a href="{% url 'home' %}" class="btn btn-secondary">Retour</a>
+        {% endif %}
+    </form>
 
 </div>
 

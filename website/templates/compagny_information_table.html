@@ -3,7 +3,7 @@
     <!-- Contenu de la table -->
   <thead class="table-dark">
     <tr>
-      <th scope="col">Company Name</th>
+      <th scope="col">Nom de l'entreprise</th>
       <th scope="col">Siren</th>
       <th scope="col">Type</th>
       <th scope="col">Nb Effectif</th>
@@ -15,17 +15,17 @@
   <tbody>
 
 {% if records %}
-	{% for company_information in records %}
-		<tr>
-			<td>{{ company_information.nom_entreprise }} </td>
-			<td>{{ company_information.siren }}</td>
-			<td>{{ company_information.type_entreprise}}</td>
-			<td>{{ company_information.nb_Effectif }}</td>
-			<td>{{ company_information.Chiffre_Affaire }}</td>
-			<td>{{ company_information.Grossiste }}</td>
+    {% for company_information in records %}
+        <tr>
+            <td>{{ company_information.nom_entreprise }} </td>
+            <td>{{ company_information.siren }}</td>
+            <td>{{ company_information.type_entreprise}}</td>
+            <td>{{ company_information.nb_Effectif }}</td>
+            <td>{{ company_information.Chiffre_Affaire }}</td>
+            <td>{{ company_information.Grossiste }}</td>
             <td><a href="{% url 'record' company_information.id %}?table=table1">{{ company_information.id }}</a></td>
-		</tr>
-	{% endfor %}
+        </tr>
+    {% endfor %}
 {% endif %}
   </tbody>
 </table>
@@ -35,14 +35,14 @@
     <!-- Contenu de la table -->
   <thead class="table-dark">
     <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone</th>
-      <th scope="col">Address</th>
-      <th scope="col">City</th>
-      <th scope="col">State</th>
-      <th scope="col">Zipcode</th>
-      <th scope="col">Created At</th>
+      <th scope="col">Nom</th>
+      <th scope="col">E-mail</th>
+      <th scope="col">Téléphone</th>
+      <th scope="col">Adresse</th>
+      <th scope="col">Ville</th>
+      <th scope="col">État</th>
+      <th scope="col">Code postal</th>
+      <th scope="col">Créé à</th>
       <th scope="col">ID</th>
 
     </tr>
@@ -50,19 +50,19 @@
   <tbody>
 
 {% if records %}
-	{% for record in records %}
-		<tr>
-			<td>{{ record.first_name }} {{ record.last_name }}</td>
-			<td>{{ record.email }}</td>
-			<td>{{ record.phone }}</td>
-			<td>{{ record.address }}</td>
-			<td>{{ record.city }}</td>
-			<td>{{ record.state }}</td>
-			<td>{{ record.zipcode }}</td>
-			<td>{{ record.created_at }}</td>
-			<td><a href="{% url 'record' record.id %}?table=table2">{{ record.id }}</a></td>
-		</tr>
-	{% endfor %}
+    {% for record in records %}
+        <tr>
+            <td>{{ record.first_name }} {{ record.last_name }}</td>
+            <td>{{ record.email }}</td>
+            <td>{{ record.phone }}</td>
+            <td>{{ record.address }}</td>
+            <td>{{ record.city }}</td>
+            <td>{{ record.state }}</td>
+            <td>{{ record.zipcode }}</td>
+            <td>{{ record.created_at }}</td>
+            <td><a href="{% url 'record' record.id %}?table=table2">{{ record.id }}</a></td>
+        </tr>
+    {% endfor %}
 {% endif %}
   </tbody>
 </table>

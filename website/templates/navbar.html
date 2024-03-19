@@ -14,17 +14,17 @@
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown_add" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            ADD
+            AJOUTER
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown_add">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'add_record' %}?table=table1">Add Record</a>
+              <a class="nav-link" href="{% url 'add_record' %}?table=table1">Ajouter Enregistrement</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'add_record' %}?table=table2">Add Record2</a>
+              <a class="nav-link" href="{% url 'add_record' %}?table=table2">Ajouter Enregistrement2</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'add_record' %}">Add Record3</a>
+              <a class="nav-link" href="{% url 'add_record' %}">Ajouter Enregistrement3</a>
             </li>
           </ul>
         </li>
@@ -32,12 +32,12 @@
         <!-- Ajustez la structure HTML du deuxième menu déroulant -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            TABLES
+            TABLEAUX
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}?table=table1">TABLE 1</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}?table=table2">TABLE 2</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">TABLE 3</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}?table=table1">TABLEAU 1</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}?table=table2">TABLEAU 2</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">TABLEAU 3</a></li>
           </ul>
         </li>
 
@@ -47,11 +47,11 @@
 
         {% else %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}">Register</a>
+          <a class="nav-link" href="{% url 'register' %}">S'inscrire</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">Login</a>
-        </li>        
+          <a class="nav-link" href="{% url 'home' %}">Connexion</a>
+        </li>
         {% endif %}
 
       </ul>
@@ -59,4 +59,3 @@
     </div>
   </div>
 </nav>
-

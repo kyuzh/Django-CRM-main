@@ -97,13 +97,14 @@ def home(request):
 def TOW_FA(request, username):
 
     # Obtenez le chemin complet du répertoire `static` de votre application Django
-    static_root = os.path.join(settings.BASE_DIR, 'website', 'templates', 'static')
+    static_root = os.path.join(settings.BASE_DIR, 'website', 'static')
 
     # Définissez le chemin complet du fichier `code_{username}.json`
     file_path = os.path.join(static_root, f'code_{username}.json')
 
     # Définissez le chemin complet du fichier d'image (par exemple, static/qrcode.png)
     image_path = os.path.join(static_root, f'qrcode_{username}.png')
+
 
     if not os.path.exists(file_path) or not os.path.exists(image_path):
         key = pyotp.random_base32()
@@ -114,12 +115,13 @@ def TOW_FA(request, username):
 
         # Écrivez la clé dans le fichier JSON
         with open(file_path, 'w') as json_file:
-            json.dump({'key': key, 'first connexion': True, 'code verified': False}, json_file)
+            json.dump({'key': key, 'first_connexion': True, 'code_verified': False}, json_file)
+
     if os.path.exists(file_path):
         with open(file_path, 'r') as json_file:
             json_data = json.load(json_file)
         # Mettez à jour la valeur de la clé 'first connexion'
-        json_data['code verified'] = False
+        json_data['code_verified'] = False
         # Écrivez le contenu mis à jour dans le fichier JSON
         with open(file_path, 'w') as json_file:
             json.dump(json_data, json_file)
@@ -129,14 +131,14 @@ def TOW_FA(request, username):
 
 def verify_code(request, username):
     # Obtenez le chemin complet du répertoire `static` de votre application Django
-    static_root = os.path.join(settings.BASE_DIR, 'website', 'templates', 'static')
+    static_root = os.path.join(settings.BASE_DIR, 'website', 'static')
     image_path = os.path.join(static_root, f'qrcode_{username}.png')
     if request.method == 'POST':
         # Récupérez la valeur du champ 'code' depuis la requête POST
         entered_code = request.POST.get('code')
 
         # Obtenez le chemin complet du répertoire `static` de votre application Django
-        static_root = os.path.join(settings.BASE_DIR, 'website', 'templates', 'static')
+        static_root = os.path.join(settings.BASE_DIR, 'website', 'static')
 
         # Définissez le chemin complet du fichier `code_username.json`
         file_path = os.path.join(static_root, f'code_{username}.json')
@@ -147,20 +149,18 @@ def verify_code(request, username):
 
         # Récupérez la clé à partir du contenu JSON
         expected_code = json_data.get('key', '')
-
-
         # Générer le TOTP avec un décalage de 160 secondes
         expected_code = pyotp.TOTP(expected_code)  # interval is the time step in seconds
         current_time = int(time.time())
-        expected_code = expected_code.at(current_time + 215)
+        expected_code = expected_code.at(current_time+215) # + 215
         # Vérifiez si le code entré correspond au code attendu
         if expected_code == entered_code:
             # Écrivez la clé dans le fichier JSON
             with open(file_path, 'r') as json_file:
                 json_data = json.load(json_file)
             # Mettez à jour la valeur de la clé 'first connexion'
-            json_data['first connexion'] = False
-            json_data['code verified'] = True
+            json_data['first_connexion'] = False
+            json_data['code_verified'] = True
             # Écrivez le contenu mis à jour dans le fichier JSON
             with open(file_path, 'w') as json_file:
                 json.dump(json_data, json_file)
@@ -168,7 +168,21 @@ def verify_code(request, username):
             # Le code est correct
             return redirect('home')
         else:
-            # Le code est incorrect
+            current_time = int(time.time())
+            for i in range(30):
+                # Récupérez la clé à partir du contenu JSON
+                expected_code = json_data.get('key', '')
+                # Générer le TOTP avec un décalage de 160 secondes
+                expected_code = pyotp.TOTP(expected_code)
+
+                # Loop through a range of 7 iterations
+                expected_code = expected_code.at(current_time + (i * 30))
+                with open(os.path.join(static_root, f'incorrect_code.json'), 'a') as json_file:
+                    # Serialize the dictionary containing the expected code to JSON and write it to the file
+                    json.dump({'expected_code' + str(i * 30): expected_code}, json_file)
+                    # Add a newline character to separate each JSON object
+                    json_file.write('\n')
+                # Le code est incorrect
             return HttpResponse('Code incorrect')
 
     return render(request, 'qrcode.html', {'image_path': image_path, 'username': username})

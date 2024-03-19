@@ -2,20 +2,18 @@
 {% block content %}
 
 <div class="col-md-6 offset-md-3">
-<h1>Add Record</h1>
-<br/>
+    <h1>Ajouter un enregistrement</h1>
+    <br/>
 
-<form method="POST" action="{% url 'update_record' pk=pk %}?table={{ table }}">
-	{% csrf_token %}
+    <form method="POST" action="{% url 'update_record' pk=pk %}?table={{ table }}">
+        {% csrf_token %}
 
-	{{ form.as_p }}
+        {{ form.as_p }}
 
-<br/>
-  <button type="submit" class="btn btn-secondary">Update Record</button>
+        <br/>
+        <button type="submit" class="btn btn-secondary">Modifier l'enregistrement</button>
 
-</form>
-
-
+    </form>
 </div>
 
 {% endblock %}

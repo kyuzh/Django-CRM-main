@@ -97,8 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var searchButton = document.getElementById('searchButton');
   if (searchButton) {
     searchButton.addEventListener('click', function (event) {
-
-      // Récupérez l'élément <p> avec l'ID "recordCount"
+    // Récupérez l'élément <p> avec l'ID "recordCount"
       var nouveauRecordCount = 0;
 
       var urlParams = new URLSearchParams(window.location.search);
@@ -177,7 +176,7 @@ function updateParams(change) {
   start += change;
   var end = start + elementsPerPage -1 ;
 
-  if (page < 0) {
+  if (page <= 0) {
     page = 1;
     start = 0;
     end = elementsPerPage - 1;
@@ -224,8 +223,6 @@ function updateParams(change) {
   }
 
 }
-
-
 
 function goToPage() {
     var pageNumberInput = document.getElementById("pageNumberInput").value;
@@ -291,10 +288,4 @@ document.addEventListener("DOMContentLoaded", function () {
     if (pageNumberFromUrl !== null && !isNaN(pageNumberFromUrl) && parseInt(pageNumberFromUrl) > 0) {
         pageNumberInput.value = pageNumberFromUrl;
     }
-});
-
-// script pour récupérer la valeur de la table depuis l'URL
-document.addEventListener('DOMContentLoaded', function () {
-    // Enable the select element
-    document.querySelector('select[name="table"]').removeAttribute('disabled');
 });
