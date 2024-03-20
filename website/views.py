@@ -87,7 +87,10 @@ def home(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, "You Have Been Logged In!")
+            if check_code_verified(request, username):
+                messages.success(request, "You Have Been Logged In!")
+            else:
+                logout(request)
             return redirect('qrcode', username=username)
         else:
             messages.success(request, "There Was An Error Logging In, Please Try Again...")
@@ -127,7 +130,7 @@ def TOW_FA(request, username):
             json.dump(json_data, json_file)
 
     # Renvoyer le modèle HTML avec le chemin d'accès au QR code
-    return render(request, 'qrcode.html', {'image_path': image_path, 'username': username})
+    return render(request, 'qrcode.html', {"json_data": json_data, 'image_path': image_path, 'username': username})
 
 def verify_code(request, username):
     # Obtenez le chemin complet du répertoire `static` de votre application Django
@@ -152,20 +155,23 @@ def verify_code(request, username):
         # Générer le TOTP avec un décalage de 160 secondes
         expected_code = pyotp.TOTP(expected_code)  # interval is the time step in seconds
         current_time = int(time.time())
-        expected_code = expected_code.at(current_time+215) # + 215
+        expected_code = expected_code.at(current_time+240) # + 215
         # Vérifiez si le code entré correspond au code attendu
         if expected_code == entered_code:
             # Écrivez la clé dans le fichier JSON
             with open(file_path, 'r') as json_file:
                 json_data = json.load(json_file)
-            # Mettez à jour la valeur de la clé 'first connexion'
-            json_data['first_connexion'] = False
-            json_data['code_verified'] = True
+                # Mettez à jour la valeur de la clé 'first connexion'
+                json_data['first_connexion'] = False
+                json_data['code_verified'] = True
+
             # Écrivez le contenu mis à jour dans le fichier JSON
             with open(file_path, 'w') as json_file:
                 json.dump(json_data, json_file)
 
             # Le code est correct
+            if not check_code_verified(request, username):
+                logout(request)
             return redirect('home')
         else:
             current_time = int(time.time())
@@ -191,6 +197,7 @@ def verify_code(request, username):
 def logout_user(request):
     logout(request)
     messages.success(request, "You Have Been Logged Out...")
+
     return redirect('home')
 
 
@@ -204,7 +211,10 @@ def register_user(request):
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
-            messages.success(request, "You Have Successfully Registered! Welcome!")
+            if check_code_verified(request, username):
+                messages.success(request, "You Have Successfully Registered! Welcome!")
+            else:
+                logout(request)
             return redirect('home')
     else:
         form = SignUpForm()
@@ -361,3 +371,13 @@ def export_excel(request):
     wb.save(response)
 
     return response
+
+def check_code_verified(request,username):
+    static_root = os.path.join(settings.BASE_DIR, 'website', 'static')
+    file_path = os.path.join(static_root, f'code_{username}.json')
+    with open(file_path, 'r') as json_file:
+        json_data = json.load(json_file)
+        # Mettez à jour la valeur de la clé 'first connexion'
+        if json_data['code_verified'] == False:
+            logout(request)
+    return json_data['code_verified']

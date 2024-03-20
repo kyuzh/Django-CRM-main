@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
+
 {% block filtre %}
+
 
 {% if user.is_authenticated %}
 
@@ -109,8 +111,9 @@
     </div>
 </div>
 {% endif %}
-
 {% endblock%}
+
+
 
 {% block content %}
 {% if user.is_authenticated %}
