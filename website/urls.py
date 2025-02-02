@@ -3,7 +3,7 @@ from . import views
 
 from django.views.decorators.cache import never_cache
 urlpatterns = [
-    path('', views.home,  name='home'),
+    path('', never_cache(views.home), name='home'),
     path('home/', never_cache(views.home), name='home'),
     # path('login/', views.login_user, name='login'),
     path('logout/', never_cache(views.logout_user), name='logout'),

@@ -17,6 +17,8 @@ import csv
 import openpyxl
 import pyotp
 import qrcode
+import datetime
+
 
 def model_table(table):
     # Filtrage des enregistrements
@@ -25,59 +27,65 @@ def model_table(table):
     else:
         model = Record
     return model
-def query_table(table):
-    # Filtrage des enregistrements
+
+
+def query_and_filter_records(request, table, model, search_value=None, page=1, per_page=10):
+    # Sélection du queryset
     if table == 'table1':
         records_query = company_information.objects.all()
     else:
         records_query = Record.objects.all()
-    return records_query
-
-def record_filtre(request, model, records_query,search_value):
 
     # Obtenez les noms des champs du modèle
     field_names = [field.name for field in model._meta.get_fields()]
-    # Triez le QuerySet
+
+    # Appliquer les filtres AVANT la pagination
+    if search_value:
+        if 'phone' in field_names and 'address' in field_names:
+            records_query = records_query.filter(
+                Q(phone__icontains=search_value) | Q(address__icontains=search_value)
+            )
+        if 'siren' in field_names and 'nom_entreprise' in field_names:
+            records_query = records_query.filter(
+                Q(nom_entreprise__icontains=search_value) | Q(siren__icontains=search_value)
+            )
+
+    # Trier par ID
     records_query = records_query.order_by('id')
 
-    if 'phone' in field_names and 'address' in field_names:
-
-        # Appliquez le filtre si la valeur n'est pas vide
-        if search_value:
-            # Utilisez Q pour effectuer une recherche sur plusieurs champs
-            records_query = records_query.filter(Q(phone__icontains=search_value) | Q(address__icontains=search_value))
-
-    if 'siren' in field_names and 'nom_entreprise' in field_names:
-
-        # Appliquez le filtre si la valeur n'est pas vide
-        if search_value:
-            # Utilisez Q pour effectuer une recherche sur plusieurs champs
-            records_query = records_query.filter(
-                Q(nom_entreprise__icontains=search_value) | Q(siren__icontains=search_value))
-
     # Pagination
-    page = request.GET.get('page', 1)  # Par défaut, la première page est affichée
-    paginator = Paginator(records_query, 200)  # Vous pouvez ajuster le nombre d'enregistrements par page
+    paginator = Paginator(records_query, per_page)
 
     try:
-        records = paginator.page(page)
+        records_page = paginator.page(page)
     except PageNotAnInteger:
-        records = paginator.page(1)
+        records_page = paginator.page(1)  # Retourne la première page si `page` est invalide
     except EmptyPage:
-        records = paginator.page(paginator.num_pages)
+        records_page = paginator.page(paginator.num_pages)  # Retourne la dernière page si `page` est trop grand
+    print(records_page)
+    # ✅ Retourne uniquement les objets paginés
+    return records_page
 
-    return records, records_query
 
 def home(request):
-    # Récupérez la valeur du paramètre de requête 'table'
-    table = request.GET.get('table', 'table1')  # Si le paramètre 'table' n'est pas présent, utilisez 'table2' par défaut
-    # Récupérez les valeurs des filtres depuis la requête GET
-    search_value = request.GET.get('searchValue')
-    # Filtrage des enregistrements
-    records_query = query_table(table)
+    # Récupération des paramètres GET
+    table = request.GET.get('table', 'table1')
+    search_value = request.GET.get('searchValue', '').strip()
+    page = request.GET.get('page', 1)
+    per_page = request.GET.get('elementsPerPage', 10)
+
+    try:
+        page = int(page)
+        per_page = int(per_page)
+    except ValueError:
+        page, per_page = 1, 10  # Valeurs par défaut si erreur de conversion
+
+    # Filtrage et pagination
     model = model_table(table)
-    records, records_query = record_filtre(request, model, records_query,search_value)
-    record_count = records_query.count()
+    records_query= query_and_filter_records(request, table, model, search_value=search_value, page=page, per_page=per_page)
+
+    # Calcul du nombre total d'enregistrements après filtrage
+    record_count = records_query.paginator.count
 
     # Check to see if logging in
     if request.method == 'POST':
@@ -87,16 +95,30 @@ def home(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            if check_code_verified(request, username):
+            if check_code_verified(request, username):  # Ensure this logic works as expected
                 messages.success(request, "You Have Been Logged In!")
+                return redirect('qrcode', username=username)
             else:
-                logout(request)
-            return redirect('qrcode', username=username)
+                logout(request)  # Logout if code verification fails
+                messages.error(request, "Error with code verification. Please try again.")
+                return redirect('home')
         else:
-            messages.success(request, "There Was An Error Logging In, Please Try Again...")
+            messages.error(request, "There Was An Error Logging In, Please Try Again...")
             return redirect('home')
     else:
-        return render(request, 'home.html', {'table': table, 'records':records,'record_count':record_count, 'search_value': search_value})
+        return render(request, 'home.html', {
+            'table': table,
+            'records': records_query,  # Contient les objets paginés
+            'record_count': record_count,
+            'search_value': search_value,
+            'current_page': records_query.number,
+            'total_pages': records_query.paginator.num_pages,
+            'has_next': records_query.has_next(),
+            'has_previous': records_query.has_previous(),
+            'next_page': records_query.next_page_number() if records_query.has_next() else None,
+            'previous_page': records_query.previous_page_number() if records_query.has_previous() else None,
+            'elements_per_page': per_page,
+        })
 def TOW_FA(request, username):
 
     # Obtenez le chemin complet du répertoire `static` de votre application Django
@@ -155,7 +177,8 @@ def verify_code(request, username):
         # Générer le TOTP avec un décalage de 160 secondes
         expected_code = pyotp.TOTP(expected_code)  # interval is the time step in seconds
         current_time = int(time.time())
-        expected_code = expected_code.at(current_time+240) # + 215
+        expected_code = expected_code.at(current_time) # + 215
+        # print(expected_code)
         # Vérifiez si le code entré correspond au code attendu
         if expected_code == entered_code:
             # Écrivez la clé dans le fichier JSON
@@ -174,21 +197,7 @@ def verify_code(request, username):
                 logout(request)
             return redirect('home')
         else:
-            current_time = int(time.time())
-            for i in range(30):
-                # Récupérez la clé à partir du contenu JSON
-                expected_code = json_data.get('key', '')
-                # Générer le TOTP avec un décalage de 160 secondes
-                expected_code = pyotp.TOTP(expected_code)
-
-                # Loop through a range of 7 iterations
-                expected_code = expected_code.at(current_time + (i * 30))
-                with open(os.path.join(static_root, f'incorrect_code.json'), 'a') as json_file:
-                    # Serialize the dictionary containing the expected code to JSON and write it to the file
-                    json.dump({'expected_code' + str(i * 30): expected_code}, json_file)
-                    # Add a newline character to separate each JSON object
-                    json_file.write('\n')
-                # Le code est incorrect
+            # Le code est incorrect
             return HttpResponse('Code incorrect')
 
     return render(request, 'qrcode.html', {'image_path': image_path, 'username': username})
@@ -290,34 +299,36 @@ def update_record(request, pk):
         messages.success(request, "You Must Be Logged In...")
         return redirect('home')
 
-
 def export_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="table_data.csv"'
 
-    # Récupérez la valeur du paramètre de requête 'table'
-    table = request.GET.get('table', 'table2')  # Si le paramètre 'table' n'est pas présent, utilisez 'table2' par défaut
-    # Récupérez les valeurs des filtres depuis la requête GET
-    search_value = request.GET.get('searchValue')
-    # Filtrage des enregistrements
-    records_query = query_table(table)
+    # Récupérer les paramètres de la requête
+    table = request.GET.get('table', 'table2')
+    search_value = request.GET.get('searchValue', '').strip()
+    page = request.GET.get('page', 1)  # Valeur par défaut = 1
+    per_page = request.GET.get('elementsPerPage', 10)  # Valeur par défaut = 10
+
+    try:
+        page = int(page)
+        per_page = int(per_page)
+    except ValueError:
+        page, per_page = 1, 10  # Sécurité en cas d'erreur de conversion
+
+    # Récupération du modèle et des enregistrements filtrés
     model = model_table(table)
+    records_query = query_and_filter_records(request, table, model, search_value=search_value, page=page, per_page=per_page)
+
+    # Obtenir les noms des champs du modèle
     field_names = [field.name for field in model._meta.get_fields()]
-    records, records_query = record_filtre(request, model, records_query,search_value)
 
-    # Récupérez les valeurs des filtres depuis la requête GET
-    page = request.GET.get('page')
-    # Récupérez les valeurs des filtres depuis la requête GET
-    elementsPerPage = request.GET.get('elementsPerPage')
-
-    start = (int(page) - 1) * int(elementsPerPage)
-    end = min(start + int(elementsPerPage),len(records))
-
+    # Créer un writer CSV
     writer = csv.writer(response)
-    writer.writerow(field_names)
+    writer.writerow(field_names)  # Écriture des en-têtes
 
-    for i in range(start, end):
-        writer.writerow([getattr(records[i], field) for field in field_names])
+    # Écriture des lignes de données
+    for record in records_query:
+        writer.writerow([getattr(record, field) for field in field_names])
 
     return response
 
@@ -326,50 +337,42 @@ def export_excel(request):
     wb = openpyxl.Workbook()
     ws = wb.active
 
-    # Récupérez la valeur du paramètre de requête 'table'
-    table = request.GET.get('table', 'table2')  # Si le paramètre 'table' n'est pas présent, utilisez 'table2' par défaut
-    # Récupérez les valeurs des filtres depuis la requête GET
-    search_value = request.GET.get('searchValue')
-    # Filtrage des enregistrements
-    records_query = query_table(table)
+    # Récupération des paramètres GET
+    table = request.GET.get('table', 'table2')
+    search_value = request.GET.get('searchValue', '').strip()
+    page = request.GET.get('page', 1)
+    per_page = request.GET.get('elementsPerPage', 10)
+
+    try:
+        page = int(page)
+        per_page = int(per_page)
+    except ValueError:
+        page, per_page = 1, 10  # Sécurité en cas d'erreur de conversion
+
+    # Récupération du modèle et des enregistrements filtrés
     model = model_table(table)
+    records_query =  query_and_filter_records(request, table, model, search_value=search_value, page=page, per_page=per_page)
+
+    # Obtenir les noms des champs du modèle
     field_names = [field.name for field in model._meta.get_fields()]
-    records, records_query = record_filtre(request, model, records_query,search_value)
+    ws.append(field_names)  # Ajout de l'en-tête
 
-    # Récupérez les valeurs des filtres depuis la requête GET
-    page = request.GET.get('page')
-    # Récupérez les valeurs des filtres depuis la requête GET
-    elementsPerPage = request.GET.get('elementsPerPage')
-
-    start = (int(page) - 1) * int(elementsPerPage)
-    end = min(start + int(elementsPerPage),len(records))
-
-    # Créez les données de la base de données dans le fichier Excel
-    header_row = [field_name for field_name in field_names]
-    ws.append(header_row)
-
-    # Écrivez les données de la base de données dans le fichier Excel
-    for i in range(start, end):
-        if 'created_at' in field_names:
-            # Assurez-vous que la date est sans information de fuseau horaire (tzinfo à None)
-            created_at_without_tz = records[i].created_at.replace(tzinfo=None)
-
-        # Access attributes directly using record.field_name
-        row_data = [getattr(records[i], field) for field in field_names]
-
-        # Replace the 'created_at' value in row_data with the adjusted created_at_without_tz
-        if 'created_at' in field_names:
-            row_data[field_names.index('created_at')] = created_at_without_tz
-
+    # Remplissage des données
+    for record in records_query:
+        row_data = []
+        for field in field_names:
+            value = getattr(record, field, '')  # Récupérer la valeur ou une chaîne vide si None
+            if isinstance(value, (datetime.date, datetime.datetime)):
+                value = value.replace(tzinfo=None)  # Retirer le fuseau horaire si nécessaire
+            row_data.append(value)
         ws.append(row_data)
 
-    # Créez une réponse HTTP avec le contenu du fichier Excel
+    # Création de la réponse HTTP
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="table_data.xlsx"'
 
-    # Écrivez le contenu du classeur Excel dans la réponse HTTP
+    # Écrire le fichier Excel dans la réponse HTTP
     wb.save(response)
-
     return response
 
 def check_code_verified(request,username):

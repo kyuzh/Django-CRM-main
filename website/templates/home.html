@@ -7,60 +7,32 @@
 {% if user.is_authenticated %}
 
 <div class="d-flex flex-row">
-    <!-- Sidebar -->
-  <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 200px;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-4">Sidebar</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <a href="{% url 'home' %}" class="nav-link active" aria-current="page">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
-          Accueil
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
-          Tableau de bord
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
-          Commandes
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Produits
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"></use></svg>
-          Clients
-        </a>
-      </li>
+
+
+<!-- Bouton pour afficher la sidebar en dehors -->
+<button class="btn btn-outline-light custom-btn m-3" id="sidebarToggleBtn" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar">
+    >
+</button>
+
+<!-- Sidebar -->
+<div class="bg-dark text-white vh-100 p-3 collapse" id="sidebar">
+    <!-- Bouton dans la sidebar qui apparaîtra quand la sidebar est visible -->
+    <button class="btn btn-outline-light m-3" id="toggleSidebarBtn" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar">
+        ☰
+    </button>
+
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{% url 'home' %}">🏠 Accueil</a>
+        </li>
+        <li>
+            <a href="#" class="nav-link text-white">📊 Tableau de bord</a>
+        </li>
+        <li>
+            <a href="#" class="nav-link text-white">🛒 Commandes</a>
+        </li>
     </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>mdo</strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" style="">
-        <li><a class="dropdown-item" href="#">Nouveau projet...</a></li>
-        <li><a class="dropdown-item" href="#">Paramètres</a></li>
-        <li><a class="dropdown-item" href="#">Profil</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Se déconnecter</a></li>
-      </ul>
-    </div>
-  </div>
+</div>
 
   <!-- Contenu principal (à droite du sidebar) -->
   <div class="flex-grow-1">
