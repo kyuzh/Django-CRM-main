@@ -34,27 +34,84 @@ class SignUpForm(UserCreationForm):
 
 # Create Add Record Form
 class AddRecordForm(forms.ModelForm):
-	first_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"First Name", "class":"form-control"}), label="")
-	last_name = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Last Name", "class":"form-control"}), label="")
-	email = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Email", "class":"form-control"}), label="")
-	phone = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Phone", "class":"form-control"}), label="")
-	address = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Address", "class":"form-control"}), label="")
-	city = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"City", "class":"form-control"}), label="")
-	state = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"State", "class":"form-control"}), label="")
-	zipcode = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Zipcode", "class":"form-control"}), label="")
+    first_name = forms.CharField(
+        required=True,
+        label="First Name",
+        widget=forms.TextInput(attrs={"placeholder":"First Name", "class":"form-control"})
+    )
+    last_name = forms.CharField(
+        required=True,
+        label="Last Name",
+        widget=forms.TextInput(attrs={"placeholder":"Last Name", "class":"form-control"})
+    )
+    email = forms.CharField(
+        required=True,
+        label="Email",
+        widget=forms.TextInput(attrs={"placeholder":"Email", "class":"form-control"})
+    )
+    phone = forms.CharField(
+        required=True,
+        label="Phone",
+        widget=forms.TextInput(attrs={"placeholder":"Phone", "class":"form-control"})
+    )
+    address = forms.CharField(
+        required=True,
+        label="Address",
+        widget=forms.TextInput(attrs={"placeholder":"Address", "class":"form-control"})
+    )
+    city = forms.CharField(
+        required=True,
+        label="City",
+        widget=forms.TextInput(attrs={"placeholder":"City", "class":"form-control"})
+    )
+    state = forms.CharField(
+        required=True,
+        label="State",
+        widget=forms.TextInput(attrs={"placeholder":"State", "class":"form-control"})
+    )
+    zipcode = forms.CharField(
+        required=True,
+        label="Zipcode",
+        widget=forms.TextInput(attrs={"placeholder":"Zipcode", "class":"form-control"})
+    )
 
-	class Meta:
-		model = Record
-		exclude = ("user",)
+    class Meta:
+        model = Record
+        exclude = ("user",)
+
 
 class AddRecordForm_compagny_information(forms.ModelForm):
-	nom_entreprise = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"nom d'entreprise", "class":"form-control"}), label="")
-	siren = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Siren", "class":"form-control"}), label="")
-	type_entreprise = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"type d'entreprise", "class":"form-control"}), label="")
-	nb_Effectif = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Nb Effectif", "class":"form-control"}), label="")
-	Chiffre_Affaire = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Chiffre d'Affaire", "class":"form-control"}), label="")
-	Grossiste = forms.CharField(required=True, widget=forms.widgets.TextInput(attrs={"placeholder":"Grossiste", "class":"form-control"}), label="")
+    nom_entreprise = forms.CharField(
+        required=True,
+        label="Nom de l'entreprise",
+        widget=forms.TextInput(attrs={"placeholder":"Nom d'entreprise", "class":"form-control"})
+    )
+    siren = forms.CharField(
+        required=True,
+        label="SIREN",
+        widget=forms.TextInput(attrs={"placeholder":"SIREN", "class":"form-control"})
+    )
+    type_entreprise = forms.CharField(
+        required=True,
+        label="Type d'entreprise",
+        widget=forms.TextInput(attrs={"placeholder":"Type d'entreprise", "class":"form-control"})
+    )
+    nb_Effectif = forms.CharField(
+        required=True,
+        label="Nombre d'effectif",
+        widget=forms.TextInput(attrs={"placeholder":"Nb Effectif", "class":"form-control"})
+    )
+    Chiffre_Affaire = forms.CharField(
+        required=True,
+        label="Chiffre d'Affaire",
+        widget=forms.TextInput(attrs={"placeholder":"Chiffre d'Affaire", "class":"form-control"})
+    )
+    Grossiste = forms.CharField(
+        required=True,
+        label="Grossiste",
+        widget=forms.TextInput(attrs={"placeholder":"Grossiste", "class":"form-control"})
+    )
 
-	class Meta:
-		model = company_information
-		exclude = ("user",)
+    class Meta:
+        model = company_information
+        exclude = ("user",)

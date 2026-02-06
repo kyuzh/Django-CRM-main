@@ -1,66 +1,28 @@
 {% if table == 'table1' %}
 <div class="card">
-  <div class="card-header"><strong>
-    	{{ customer_record.nom_entreprise }}</strong>
-  </div>
+  <div class="card-header"><strong>{{ customer_record.nom_entreprise }}</strong></div>
   <div class="card-body">
-
-
-<p class="card-text">
-<strong>Email: </strong>{{ customer_record.siren }}</p>
-
-<p class="card-text">
-<strong>Phone: </strong>{{ customer_record.type_entreprise  }}
-</p>
-
-<p class="card-text">
-<strong>Address: </strong>{{ customer_record.nb_Effectif }}</p>
-
-<p class="card-text">
-<strong>City: </strong>{{ customer_record.Chiffre_Affaire }}</p>
-
-<p class="card-text">
-<strong>State: </strong>{{ customer_record.Grossiste }}</p>
-
-<p class="card-text">
-<strong>ID: </strong>{{ customer_record.id }}</p>
-
+    <p class="card-text"><strong>Nom de l'entreprise: </strong>{{ customer_record.nom_entreprise }}</p>
+    <p class="card-text"><strong>SIREN: </strong>{{ customer_record.siren }}</p>
+    <p class="card-text"><strong>Type: </strong>{{ customer_record.type_entreprise }}</p>
+    <p class="card-text"><strong>Nombre d'effectif: </strong>{{ customer_record.nb_Effectif }}</p>
+    <p class="card-text"><strong>Chiffre d'affaire: </strong>{{ customer_record.Chiffre_Affaire }}</p>
+    <p class="card-text"><strong>Grossiste: </strong>{{ customer_record.Grossiste }}</p>
+    <p class="card-text"><strong>ID: </strong>{{ customer_record.id }}</p>
   </div>
 </div>
 {% else %}
 <div class="card">
-  <div class="card-header"><strong>
-    	{{ customer_record.first_name }}
-		{{ customer_record.last_name }}</strong>
-  </div>
+  <div class="card-header"><strong>{{ customer_record.first_name }} {{ customer_record.last_name }}</strong></div>
   <div class="card-body">
-
-
-<p class="card-text">
-<strong>Email: </strong>{{ customer_record.email }}</p>
-
-<p class="card-text">
-<strong>Phone: </strong>{{ customer_record.phone }}
-</p>
-
-<p class="card-text">
-<strong>Address: </strong>{{ customer_record.address }}</p>
-
-<p class="card-text">
-<strong>City: </strong>{{ customer_record.city }}</p>
-
-<p class="card-text">
-<strong>State: </strong>{{ customer_record.state }}</p>
-
-<p class="card-text">
-<strong>Zipcode: </strong>{{ customer_record.zipcode }}</p>
-
-<p class="card-text">
-<strong>Create At: </strong>{{ customer_record.created_at }}</p>
-
-<p class="card-text">
-<strong>ID: </strong>{{ customer_record.id }}</p>
-
+    <p class="card-text"><strong>Email: </strong>{{ customer_record.email }}</p>
+    <p class="card-text"><strong>Phone: </strong>{{ customer_record.phone }}</p>
+    <p class="card-text"><strong>Address: </strong>{{ customer_record.address }}</p>
+    <p class="card-text"><strong>City: </strong>{{ customer_record.city }}</p>
+    <p class="card-text"><strong>State: </strong>{{ customer_record.state }}</p>
+    <p class="card-text"><strong>Zipcode: </strong>{{ customer_record.zipcode }}</p>
+    <p class="card-text"><strong>Created At: </strong>{{ customer_record.created_at }}</p>
+    <p class="card-text"><strong>ID: </strong>{{ customer_record.id }}</p>
   </div>
 </div>
 {% endif %}
